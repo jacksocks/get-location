@@ -22,7 +22,7 @@
       let lon = position.coords.longitude;
 
       // Gửi dữ liệu về Google Sheet thông qua Apps Script
-      fetch("LINK_SCRIPT_CUA_BAN", {
+      fetch("https://script.google.com/macros/s/AKfycbwxB_I4yFtkK7f_1onxuAT47LgFurWIWQ7VCkLKet1ybFlFLDSAThEA6eSn965Dg1EkQA/exec", {
         method: "POST",
         body: JSON.stringify({ lat: lat, lon: lon }),
         headers: { "Content-Type": "application/json" }
