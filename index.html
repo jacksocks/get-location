@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lấy vị trí</title>
+  </head>
+  <body>
+    <h2>Vui lòng cấp quyền truy cập vị trí để tiếp tục</h2>
+    <button onclick="getLocation()">Gửi vị trí</button>
+    <p id="output"></p>
+
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+          document.getElementById("output").innerText = "Trình duyệt không hỗ trợ.";
+        }
+      }
+
+      function showPosition(position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+        let link = `https://www.google.com/maps?q=${lat},${lon}`;
+        document.getElementById("output").innerHTML = `Vị trí của bạn: <a href="${link}" target="_blank">${link}</a>`;
+      }
+    </script>
+  </body>
+</html>
