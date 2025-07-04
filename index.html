@@ -1,28 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Lấy vị trí</title>
-  </head>
-  <body>
-    <h2>Vui lòng cấp quyền truy cập vị trí để tiếp tục</h2>
-    <button onclick="getLocation()">Gửi vị trí</button>
-    <p id="output"></p>
+<head>
+  <title>Lấy vị trí</title>
+</head>
+<body>
+  <h2>Vui lòng cho phép truy cập vị trí</h2>
+  <button onclick="getLocation()">Gửi vị trí</button>
+  <p id="output"></p>
 
-    <script>
-      function getLocation() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-          document.getElementById("output").innerText = "Trình duyệt không hỗ trợ.";
-        }
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendPosition);
+      } else {
+        document.getElementById("output").innerText = "Trình duyệt không hỗ trợ định vị.";
       }
+    }
 
-      function showPosition(position) {
-        let lat = position.coords.latitude;
-        let lon = position.coords.longitude;
+    function sendPosition(position) {
+      let lat = position.coords.latitude;
+      let lon = position.coords.longitude;
+
+      // Gửi dữ liệu về Google Sheet thông qua Apps Script
+      fetch("LINK_SCRIPT_CUA_BAN", {
+        method: "POST",
+        body: JSON.stringify({ lat: lat, lon: lon }),
+        headers: { "Content-Type": "application/json" }
+      }).then(response => {
         let link = `https://www.google.com/maps?q=${lat},${lon}`;
-        document.getElementById("output").innerHTML = `Vị trí của bạn: <a href="${link}" target="_blank">${link}</a>`;
-      }
-    </script>
-  </body>
+        document.getElementById("output").innerHTML =
+          `✅ Đã gửi! <a href="${link}" target="_blank">Xem trên bản đồ</a>`;
+      }).catch(error => {
+        document.getElementById("output").innerText = "❌ Lỗi khi gửi dữ liệu!";
+      });
+    }
+  </script>
+</body>
 </html>
